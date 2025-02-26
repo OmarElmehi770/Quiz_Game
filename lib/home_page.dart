@@ -12,7 +12,8 @@ class Home_Page extends StatefulWidget {
 List<Question> questionList = getQuestions();
 int currentQuestionIndex = 0;
 int score = 0;
-Answer? selectedAnswer;
+Answer selectedAnswer = Answer("0", false);
+int? score2;
 
 class _Home_PageState extends State<Home_Page> {
   @override
@@ -23,9 +24,32 @@ class _Home_PageState extends State<Home_Page> {
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
-            spacing: 20,
+            spacing: 10,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              Text(
+                "Simple Quiz App",
+                style: TextStyle(color: Colors.white, fontSize: 25),
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text(
+                    "Question ${currentQuestionIndex + 1} / ${questionList.length}",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: 10,
+              ),
               Stack(
                 clipBehavior: Clip.none,
                 children: [
@@ -38,7 +62,8 @@ class _Home_PageState extends State<Home_Page> {
                     ),
                     child: Text(
                       questionList[currentQuestionIndex].questionText,
-                      style: TextStyle(fontSize: 20),
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                     alignment: Alignment.center,
                   ),
@@ -110,36 +135,81 @@ class _Home_PageState extends State<Home_Page> {
                   ),
                 ],
               ),
+              SizedBox(
+                height: 10,
+              ),
               for (Answer ans in questionList[currentQuestionIndex].answerList)
                 AnimatedButton(
-                  onPressed: (){
+                  onPressed: () {
                     setState(() {
-                      selectedAnswer = ans ;
+                      selectedAnswer = ans;
                     });
                   },
-                  child: Text(ans.answerText,style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold),),
-                  color: selectedAnswer == ans ? Colors.green :Colors.white,
+                  child: Text(
+                    ans.answerText,
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  color: selectedAnswer == ans ? Colors.green : Colors.white,
                 ),
-              SizedBox(height: 20,),
-              AnimatedButton(
-                width: 300,
-                onPressed: (){
-                  setState(() {
-                    currentQuestionIndex < questionList.length-1 ?currentQuestionIndex++ : print("ok");
-                  });
-                },
-                child: Text(currentQuestionIndex+1==questionList.length? "Submit":"Next",style: TextStyle(fontSize: 25),),
-                color: Colors.blueAccent,
+              SizedBox(
+                height: 20,
               ),
               AnimatedButton(
-                //width: 300,
-                onPressed: (){
+                width: 280,
+                onPressed: () {
                   setState(() {
-                    currentQuestionIndex>0 ?currentQuestionIndex-- : print("ok") ;
+                    selectedAnswer.isCorrect ? score++ : {};
+                    currentQuestionIndex < questionList.length - 1
+                        ? currentQuestionIndex++
+                        : {
+                            score2 = score,
+                            showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                  backgroundColor: Colors.white,
+                                  title: Text(
+                                    "Passed | Score is ${score2.toString()}/${questionList.length}",
+                                    style: TextStyle(
+                                      color: Colors.green,
+                                      fontSize: 20,
+                                    ),
+                                  ),
+                                  content: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      AnimatedButton(
+                                        onPressed: () {
+                                          setState(() {
+                                            score = 0;
+                                            currentQuestionIndex = 0;
+                                            Navigator.of(context).pop();
+                                            selectedAnswer = Answer("0", false);
+                                          });
+                                        },
+                                        width: 100,
+                                        height: 50,
+                                        child: Text(
+                                          "Restart",
+                                          style: TextStyle(color: Colors.white),
+                                        ),
+                                        color: Colors.black,
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                            ),
+                          };
                   });
                 },
-                child: Text("Back",style: TextStyle(fontSize: 25),),
-                color: Colors.redAccent,
+                child: Text(
+                  currentQuestionIndex + 1 == questionList.length
+                      ? "S u b m i t"
+                      : "N e x t",
+                  style: TextStyle(fontSize: 25),
+                ),
+                color: Colors.white,
               ),
             ],
           ),
@@ -148,3 +218,19 @@ class _Home_PageState extends State<Home_Page> {
     );
   }
 }
+
+// AnimatedButton(
+// //width: 300,
+// onPressed: () {
+// setState(() {
+// currentQuestionIndex > 0
+// ? currentQuestionIndex--
+//     : print("ok");
+// });
+// },
+// child: Text(
+// "Back",
+// style: TextStyle(fontSize: 25),
+// ),
+// color: Colors.redAccent,
+// ),
