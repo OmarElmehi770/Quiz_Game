@@ -162,14 +162,13 @@ class _Home_PageState extends State<Home_Page> {
                     currentQuestionIndex < questionList.length - 1
                         ? currentQuestionIndex++
                         : {
-                            score2 = score,
                             showDialog(
                               context: context,
                               builder: (context) {
                                 return AlertDialog(
                                   backgroundColor: Colors.white,
                                   title: Text(
-                                    "Passed | Score is ${score2.toString()}/${questionList.length}",
+                                    "Passed | Score is ${score.toString()}/${questionList.length}",
                                     style: TextStyle(
                                       color: Colors.green,
                                       fontSize: 20,
